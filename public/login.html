@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FGHOA — Community Vote Access</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a3a5c 0%, #2c5f2e 100%);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 40px 36px 36px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+
+    .login-logo { font-size: 3rem; margin-bottom: 8px; }
+
+    .login-card h1 {
+      font-size: 1.4rem;
+      color: #1a3a5c;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .login-card .sub {
+      font-size: 0.88rem;
+      color: #666;
+      margin-bottom: 28px;
+    }
+
+    .login-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #333;
+      text-align: left;
+      margin-bottom: 7px;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #dde2d9;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #222;
+      background: #f8f9f8;
+      transition: border-color 0.2s;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    .login-input:focus {
+      outline: none;
+      border-color: #3d8b3f;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(61,139,63,0.12);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #2c5f2e, #1a3a5c);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .login-btn:hover   { opacity: 0.9; }
+    .login-btn:active  { transform: scale(0.99); }
+    .login-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .login-error {
+      margin-top: 14px;
+      font-size: 0.85rem;
+      color: #c62828;
+      min-height: 18px;
+      font-weight: 600;
+    }
+
+    .login-hint {
+      margin-top: 20px;
+      font-size: 0.78rem;
+      color: #999;
+      line-height: 1.5;
+    }
+
+    footer {
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.55);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="login-logo">🏘️</div>
+    <h1>Fallsington Grant HOA</h1>
+    <p class="sub">Recreation Area Redevelopment &mdash; Community Vote 2026</p>
+
+    <label class="login-label" for="password">Community Access Password</label>
+    <input
+      class="login-input"
+      type="password"
+      id="password"
+      placeholder="Enter password"
+      autocomplete="current-password"
+      autocapitalize="none"
+      spellcheck="false"
+      maxlength="50"
+    >
+
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">Enter Voting Site</button>
+    <div class="login-error" id="loginError"></div>
+
+    <p class="login-hint">
+      Password was shared in the community newsletter.<br>
+      Contact your HOA board if you did not receive it.
+    </p>
+  </div>
+
+  <footer>Fallsington Grant Homeowners Association &bull; 2026</footer>
+
+  <script>
+    // Allow Enter key to submit
+    document.getElementById('password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+
+    // Auto-focus password field
+    document.getElementById('password').focus();
+
+    async function doLogin() {
+      const pw  = document.getElementById('password').value;
+      const btn = document.getElementById('loginBtn');
+      const err = document.getElementById('loginError');
+
+      err.textContent = '';
+      btn.disabled    = true;
+      btn.textContent = 'Checking…';
+
+      try {
+        const res  = await fetch('/api/login', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ password: pw })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          btn.textContent = '✓ Access granted…';
+          window.location.href = '/';
+        } else {
+          err.textContent  = data.error || 'Incorrect password.';
+          btn.disabled     = false;
+          btn.textContent  = 'Enter Voting Site';
+          document.getElementById('password').select();
+        }
+      } catch {
+        err.textContent = 'Connection error. Please try again.';
+        btn.disabled    = false;
+        btn.textContent = 'Enter Voting Site';
+      }
+    }
+  </script>
+</body>
+</html>

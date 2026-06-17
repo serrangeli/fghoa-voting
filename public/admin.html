@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FGHOA — Admin Panel</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1a3a5c; --green: #2c5f2e; --bg: #f2f4f0;
+      --card: #fff; --border: #dde2d9; --radius: 12px;
+    }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #222; }
+
+    header {
+      background: linear-gradient(135deg, var(--navy), var(--green));
+      color: #fff; padding: 18px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    header h1 { font-size: 1.1rem; }
+    header a  { color: rgba(255,255,255,0.75); font-size: 0.82rem; text-decoration: none; }
+    header a:hover { color: #fff; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 28px 20px; display: grid; gap: 22px; }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    }
+    .card h2 { font-size: 1rem; color: var(--navy); margin-bottom: 14px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+
+    /* Stats */
+    .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+    .stat-box { background: var(--bg); border-radius: 10px; padding: 12px 20px; text-align: center; flex: 1; min-width: 100px; }
+    .stat-num  { font-size: 2rem; font-weight: 800; color: var(--navy); }
+    .stat-lbl  { font-size: 0.78rem; color: #666; }
+
+    /* Tally bars */
+    .tally-section { margin-bottom: 6px; }
+    .tally-section h3 { font-size: 0.85rem; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .tally-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .tally-label { width: 220px; font-size: 0.85rem; font-weight: 600; color: var(--navy); flex-shrink: 0; }
+    .tally-bar-wrap { flex: 1; background: #e8edf5; border-radius: 20px; height: 18px; overflow: hidden; }
+    .tally-bar { height: 100%; border-radius: 20px; transition: width 0.5s ease; min-width: 2px; }
+    .tally-count { font-size: 0.82rem; font-weight: 700; color: var(--navy); width: 30px; text-align: right; }
+
+    .first-bar  { background: #c9a227; }
+    .second-bar { background: #6c7fa3; }
+
+    /* Votes table */
+    .votes-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .votes-table th { background: var(--bg); padding: 8px 10px; text-align: left; font-weight: 700; color: var(--navy); border-bottom: 2px solid var(--border); }
+    .votes-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .votes-table tr:last-child td { border-bottom: none; }
+    .votes-table tr:hover td { background: #f8faf8; }
+    .badge-first  { background: #fff8e1; color: #7a5c00; font-weight: 700; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
+    .badge-second { background: #e8edf5; color: var(--navy); font-weight: 700; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
+    .updated-badge { background: #e8f5e9; color: #2c5f2e; font-size: 0.72rem; padding: 1px 6px; border-radius: 8px; }
+    .comment-cell { color: #555; font-style: italic; max-width: 250px; }
+
+    /* Buttons */
+    .btn { padding: 9px 20px; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: opacity 0.18s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--navy); color: #fff; }
+    .btn-green   { background: var(--green); color: #fff; }
+    .btn-danger  { background: #c62828; color: #fff; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+    /* File upload */
+    .upload-area {
+      border: 2px dashed var(--border); border-radius: 10px; padding: 20px;
+      text-align: center; margin: 12px 0; cursor: pointer; transition: border-color 0.2s;
+    }
+    .upload-area:hover { border-color: var(--navy); }
+    .upload-area input[type=file] { display: none; }
+    .upload-area .upload-hint { font-size: 0.85rem; color: #666; }
+
+    .msg { margin-top: 10px; font-size: 0.85rem; min-height: 18px; }
+    .msg.ok  { color: var(--green); font-weight: 600; }
+    .msg.err { color: #c62828; font-weight: 600; }
+
+    .refresh-note { font-size: 0.78rem; color: #999; margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🏘️ FGHOA — Admin Panel</h1>
+  <div style="display:flex;gap:16px;align-items:center">
+    <a href="/">← Back to voting site</a>
+    <a href="/logout">Sign out</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ── LIVE STATS ───────────────────────────────────────────────── -->
+  <div class="card" id="statsCard">
+    <h2>📊 Live Results</h2>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-num" id="statTotal">—</div><div class="stat-lbl">Votes Cast</div></div>
+      <div class="stat-box"><div class="stat-num" id="statHH">97</div><div class="stat-lbl">Total Households</div></div>
+      <div class="stat-box"><div class="stat-num" id="statPct">—</div><div class="stat-lbl">Participation</div></div>
+    </div>
+
+    <div class="tally-section">
+      <h3>🥇 1st Choice Votes</h3>
+      <div id="firstBars"></div>
+    </div>
+    <div class="tally-section" style="margin-top:14px">
+      <h3>🥈 2nd Choice Votes</h3>
+      <div id="secondBars"></div>
+    </div>
+    <p class="refresh-note">Auto-refreshes every 30 seconds. <a href="#" onclick="loadResults();return false">Refresh now</a></p>
+  </div>
+
+  <!-- ── VOTE LOG ─────────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>🗳️ Individual Vote Log</h2>
+    <div style="overflow-x:auto">
+      <table class="votes-table" id="votesTable">
+        <thead>
+          <tr>
+            <th>House</th><th>1st Choice</th><th>2nd Choice</th>
+            <th>Timestamp</th><th>Comment</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="votesBody"><tr><td colspan="6" style="text-align:center;color:#999">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── BACKUP / RESTORE ─────────────────────────────────────────── -->
+  <div class="card">
+    <h2>💾 Backup &amp; Restore Votes</h2>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:14px">
+      <strong>Before redeploying:</strong> download a backup. <strong>After redeploying:</strong> upload it back to restore all votes. To fully reset voting, just redeploy without restoring.
+    </p>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="exportVotes()">⬇ Download votes.json</button>
+    </div>
+
+    <div style="margin-top:20px">
+      <strong style="font-size:0.88rem">Restore from backup:</strong>
+      <div class="upload-area" onclick="document.getElementById('importFile').click()">
+        <input type="file" id="importFile" accept=".json,application/json" onchange="handleImport(event)">
+        <div class="upload-hint">📂 Click to select a votes.json backup file</div>
+        <div id="importFileName" style="font-size:0.82rem;color:var(--navy);margin-top:4px"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-green" id="importBtn" onclick="importVotes()" disabled>⬆ Restore votes from file</button>
+      </div>
+      <div class="msg" id="importMsg"></div>
+    </div>
+  </div>
+
+  <!-- ── DANGER ZONE ──────────────────────────────────────────────── -->
+  <div class="card" style="border-left:4px solid #c62828">
+    <h2>⚠️ Danger Zone</h2>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:14px">
+      Permanently deletes all votes from the server. This cannot be undone — download a backup first.
+    </p>
+    <div class="btn-row">
+      <button class="btn btn-danger" onclick="clearVotes()">🗑 Clear ALL Votes</button>
+    </div>
+    <div class="msg" id="clearMsg"></div>
+  </div>
+
+</div>
+
+<script>
+const OPTIONS = {
+  A: 'Surface Only',
+  B: 'Simple Rec Area',
+  C: 'Shelter Only Area',
+  D: 'Rec Area + Bocce',
+  E: 'Multi-Purpose Court',
+  F: 'Shelter + Amphitheater'
+};
+const COLORS_FIRST  = { A:'#6c757d', B:'#28a745', C:'#7cb518', D:'#e0a800', E:'#fd7e14', F:'#dc3545' };
+const COLORS_SECOND = { A:'#adb5bd', B:'#71c77e', C:'#b5e060', D:'#ffc940', E:'#ffaa70', F:'#ed7f7f' };
+
+let importData = null;
+
+async function loadResults() {
+  try {
+    const res  = await fetch('/api/admin/results');
+    const data = await res.json();
+
+    document.getElementById('statTotal').textContent = data.total;
+    document.getElementById('statHH').textContent    = data.households;
+    document.getElementById('statPct').textContent   = Math.round(data.total / data.households * 100) + '%';
+
+    renderBars('firstBars',  data.tally.first,  data.total, COLORS_FIRST,  'first-bar');
+    renderBars('secondBars', data.tally.second, data.total, COLORS_SECOND, 'second-bar');
+    renderVoteTable(data.votes);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function renderBars(containerId, tally, total, colors, cls) {
+  const max = Math.max(...Object.values(tally), 1);
+  document.getElementById(containerId).innerHTML = Object.entries(tally).map(([opt, count]) => `
+    <div class="tally-row">
+      <div class="tally-label">Option ${opt} — ${OPTIONS[opt]}</div>
+      <div class="tally-bar-wrap">
+        <div class="tally-bar ${cls}" style="width:${Math.round(count/max*100)}%;background:${colors[opt]}"></div>
+      </div>
+      <div class="tally-count">${count}</div>
+    </div>
+  `).join('');
+}
+
+function renderVoteTable(votes) {
+  const rows = Object.values(votes).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+  if (!rows.length) {
+    document.getElementById('votesBody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">No votes yet.</td></tr>';
+    return;
+  }
+  document.getElementById('votesBody').innerHTML = rows.map(v => `
+    <tr>
+      <td><strong>${v.house}</strong></td>
+      <td><span class="badge-first">${v.first} — ${OPTIONS[v.first]}</span></td>
+      <td><span class="badge-second">${v.second} — ${OPTIONS[v.second]}</span></td>
+      <td style="white-space:nowrap;font-size:0.78rem;color:#666">${new Date(v.timestamp).toLocaleString()}</td>
+      <td class="comment-cell">${v.comment ? v.comment : '<span style="color:#ccc">—</span>'}</td>
+      <td>${v.updated ? '<span class="updated-badge">Updated</span>' : ''}</td>
+    </tr>
+  `).join('');
+}
+
+async function exportVotes() {
+  window.location.href = '/api/admin/export';
+}
+
+function handleImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('importFileName').textContent = '📄 ' + file.name;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      importData = JSON.parse(ev.target.result);
+      document.getElementById('importBtn').disabled = false;
+      document.getElementById('importMsg').className = 'msg ok';
+      document.getElementById('importMsg').textContent = `✓ File loaded — ${Object.keys(importData).length} votes ready to restore.`;
+    } catch {
+      document.getElementById('importMsg').className = 'msg err';
+      document.getElementById('importMsg').textContent = 'Invalid JSON file.';
+      importData = null;
+      document.getElementById('importBtn').disabled = true;
+    }
+  };
+  reader.readAsText(file);
+}
+
+async function importVotes() {
+  if (!importData) return;
+  if (!confirm(`Restore ${Object.keys(importData).length} votes? This will REPLACE current votes.`)) return;
+  try {
+    const res  = await fetch('/api/admin/import', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(importData)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById('importMsg').className = 'msg ok';
+      document.getElementById('importMsg').textContent = `✓ Restored ${data.total} votes successfully.`;
+      loadResults();
+    } else {
+      document.getElementById('importMsg').className = 'msg err';
+      document.getElementById('importMsg').textContent = data.error || 'Import failed.';
+    }
+  } catch {
+    document.getElementById('importMsg').className = 'msg err';
+    document.getElementById('importMsg').textContent = 'Network error.';
+  }
+}
+
+async function clearVotes() {
+  if (!confirm('⚠️ DELETE ALL VOTES permanently? Download a backup first!')) return;
+  if (!confirm('Are you absolutely sure? This cannot be undone.')) return;
+  try {
+    const res  = await fetch('/api/admin/clear', { method: 'POST' });
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById('clearMsg').className = 'msg ok';
+      document.getElementById('clearMsg').textContent = '✓ All votes cleared.';
+      loadResults();
+    }
+  } catch {
+    document.getElementById('clearMsg').className = 'msg err';
+    document.getElementById('clearMsg').textContent = 'Error — could not clear votes.';
+  }
+}
+
+// Load on init and refresh every 30s
+loadResults();
+setInterval(loadResults, 30000);
+</script>
+</body>
+</html>

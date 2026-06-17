@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: fghoa-voting
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: SITE_PASSWORD
+        value: fgrecarea
+      - key: NODE_ENV
+        value: production

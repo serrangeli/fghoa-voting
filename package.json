@@ -1,0 +1,12 @@
+{
+  "name": "fghoa-voting",
+  "version": "1.0.0",
+  "description": "FGHOA Recreation Area Community Voting Site",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

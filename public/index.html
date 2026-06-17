@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FGHOA — Recreation Area Community Vote</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- ── HEADER ─────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-logo">🏘️</div>
+      <div class="header-text">
+        <h1>Fallsington Grant HOA</h1>
+        <p class="header-sub">Recreation Area Redevelopment &mdash; Community Vote 2026</p>
+      </div>
+      <a class="header-logout" href="/logout">Sign out</a>
+    </div>
+  </header>
+
+  <!-- ── INTRO ──────────────────────────────────────────────────── -->
+  <section class="intro-section">
+    <div class="container">
+      <div class="intro-box">
+        <p>
+          The recreation area <strong>behind the pool</strong> (currently 2 tennis courts) is ready for redevelopment.
+          Six options have been prepared — ranging from a simple resurfacing to a full community destination.
+          <strong>Every household has 2 votes.</strong>
+        </p>
+        <div class="rules-grid">
+          <div class="rule-item">
+            <span class="rule-icon">🔍</span>
+            <span>Click any card to see full details, description, pros &amp; cons</span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-icon">🥇</span>
+            <span>Select your <strong>1st Choice</strong> — the option you most prefer</span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-icon">🥈</span>
+            <span>Select your <strong>2nd Choice</strong> — your backup preference</span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-icon">🏠</span>
+            <span>Enter your house number &amp; optional comment, then submit</span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-icon">🔒</span>
+            <span>One vote per household — you may update your vote if needed</span>
+          </div>
+          <div class="rule-item">
+            <span class="rule-icon">📊</span>
+            <span>Cards are ordered <strong>lowest → highest budget</strong> relative to the resurfacing baseline</span>
+          </div>
+        </div>
+        <div class="vote-counter" id="voteCounter">
+          <span class="counter-spinner">⏳</span> Loading participation count...
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CARDS GRID ─────────────────────────────────────────────── -->
+  <main class="container">
+    <div class="cards-grid" id="cardsGrid">
+      <!-- Rendered by app.js -->
+    </div>
+  </main>
+
+  <!-- ── VOTING FORM ────────────────────────────────────────────── -->
+  <section class="voting-form-section">
+    <div class="container">
+      <div class="voting-form-box" id="votingFormBox">
+        <h2>Cast Your Household's Vote</h2>
+
+        <div class="selection-banner" id="selectionBanner">
+          <div class="sel-item" id="sel-first">
+            <span class="sel-badge gold">🥇 1st Choice</span>
+            <span class="sel-value" id="firstSelName">— not selected —</span>
+          </div>
+          <div class="sel-divider">|</div>
+          <div class="sel-item" id="sel-second">
+            <span class="sel-badge silver">🥈 2nd Choice</span>
+            <span class="sel-value" id="secondSelName">— not selected —</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="houseNumber">House Number <span class="required">*</span></label>
+          <div class="input-wrap">
+            <input type="text" id="houseNumber" placeholder="e.g. 42" maxlength="10" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="field-hint" id="houseHint"></div>
+        </div>
+
+        <div class="form-row">
+          <label for="comment">Comment <span class="optional">(optional)</span></label>
+          <textarea id="comment" rows="3" maxlength="1000"
+            placeholder="Share any thoughts, questions, or concerns about your selections..."></textarea>
+          <div class="char-count" id="charCount">0 / 1000</div>
+        </div>
+
+        <button class="btn-submit" id="submitBtn" onclick="submitVote()">
+          Submit My Vote
+        </button>
+        <div class="form-message" id="formMessage"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── QR CODE SECTION ──────────────────────────────────────── -->
+  <section class="qr-section">
+    <div class="container">
+      <div class="qr-box">
+        <div class="qr-text">
+          <h3>📱 Scan to Vote on Your Phone</h3>
+          <p>Share this QR code with other household members — it opens this voting page directly.</p>
+          <div class="qr-url" id="qrUrl"></div>
+          <a class="qr-logout" href="/logout">Sign out</a>
+        </div>
+        <div class="qr-code-wrap">
+          <canvas id="qrCanvas"></canvas>
+          <div class="qr-label">Scan with phone camera</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>Fallsington Grant Homeowners Association &bull; Recreation Area Redevelopment Project &bull; 2026</p>
+      <p class="footer-note">Delete <code>votes.json</code> to reset all votes and start from zero.</p>
+    </div>
+  </footer>
+
+  <!-- ── OVERLAY MODAL (card details) ──────────────────────────── -->
+  <div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+    <div class="overlay-panel" id="overlayPanel">
+      <button class="overlay-close" id="overlayClose" onclick="closeOverlay()">&#10005;</button>
+      <div class="overlay-body" id="overlayBody"></div>
+    </div>
+  </div>
+
+  <!-- ── ALREADY-VOTED MODAL ───────────────────────────────────── -->
+  <div class="modal-backdrop" id="alreadyVotedModal">
+    <div class="modal">
+      <div class="modal-icon">⚠️</div>
+      <h3>Vote Already Recorded</h3>
+      <div id="alreadyVotedDetails" class="modal-details"></div>
+      <div class="modal-actions">
+        <button class="btn-modal-primary" onclick="confirmUpdate()">Update My Vote</button>
+        <button class="btn-modal-secondary" onclick="closeModal('alreadyVotedModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SUCCESS MODAL ─────────────────────────────────────────── -->
+  <div class="modal-backdrop" id="successModal">
+    <div class="modal modal-success">
+      <div class="modal-icon">✅</div>
+      <h3 id="successTitle">Vote Recorded!</h3>
+      <div id="successDetails" class="modal-details"></div>
+      <button class="btn-modal-primary" onclick="closeModal('successModal')">Done</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (function initQR() {
+      const url = window.location.origin;
+      document.getElementById('qrUrl').textContent = url;
+      new QRCode(document.getElementById('qrCanvas'), {
+        text: url, width: 160, height: 160,
+        colorDark: '#1a3a5c', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    })();
+  </script>
+</body>
+</html>
