@@ -16,6 +16,175 @@ const VOTES_FILE       = path.join(DATA_DIR, 'votes.json');
 
 const TOKEN_COOKIE    = 'fghoa_auth';
 const COOKIE_MAX_AGE  = 7 * 24 * 60 * 60; // 7 days in seconds
+const CONFIG_FILE     = path.join(DATA_DIR, 'config.json');
+
+// ── Default option definitions (source of truth for names / descriptions) ────
+const DEFAULT_OPTIONS = [
+  {
+    id: 'A', visible: true,
+    name: 'Surface Only',
+    image: '0. SURFACE ONLY.jpg',
+    budget: '100% — Baseline',
+    budgetClass: 'budget-a',
+    tag: 'Baseline Budget',
+    tagColor: '#6c757d',
+    description: 'Resurface the 2 existing tennis courts — no demolition, no new construction. ' +
+      'Includes crack repair, new acrylic resurfacing coats, repainted court lines, and replacement nets and hardware. ' +
+      'The footprint stays exactly as it is today.',
+    pros: [
+      'Lowest possible budget — no surprises',
+      'Fastest completion: 2–4 weeks',
+      'No permits beyond routine maintenance',
+      'No disruption to pool area or parking',
+      'Lowest impact on HOA monthly dues',
+      'Preserves all existing infrastructure'
+    ],
+    cons: [
+      'Zero transformation — same space, same look',
+      'Tennis participation in HOAs is declining nationally',
+      'Courts will need resurfacing again in 10–15 years',
+      'No social or gathering value added to the community',
+      'Perception: "we just fixed what was already broken"'
+    ]
+  },
+  {
+    id: 'B', visible: true,
+    name: 'Simple Rec Area',
+    image: '1. SIMPLE-REC-AREA.jpg',
+    budget: '~90% – 110% of Baseline',
+    budgetClass: 'budget-b',
+    tag: '⭐ Best Value',
+    tagColor: '#28a745',
+    description: 'Remove both tennis courts and replace with an open green lawn, a prefab timber ' +
+      'pavilion with outdoor furniture, a curved hardscape patio, a stone walkway, and moderate landscaping. ' +
+      'A complete visual transformation for essentially the same budget as just resurfacing.',
+    pros: [
+      'Biggest visual transformation for essentially the same budget as resurfacing',
+      'Pavilion + furniture creates an immediate community gathering hub',
+      'Open lawn is flexible — events, kids play, yoga, informal sports, cornhole',
+      'Appeals to all ages and all family types',
+      'Low permitting complexity — fast approval',
+      'Relatively fast construction timeline'
+    ],
+    cons: [
+      'No dedicated active sport or recreation element remains',
+      'Lawn adds a modest ongoing mowing/maintenance cost',
+      'No strong destination draw beyond residents\' own backyards',
+      'May not satisfy sport-oriented residents who used the tennis courts',
+      'Pavilion can feel underused without organized community programming'
+    ]
+  },
+  {
+    id: 'C', visible: true,
+    name: 'Shelter Only Area',
+    image: '2. SHELTER-ONLY-AREA.jpg',
+    budget: '~125% – 180% of Baseline',
+    budgetClass: 'budget-c',
+    tag: '+25% to +80%',
+    tagColor: '#7cb518',
+    description: 'Demo courts and replace with a larger custom timber pavilion with built-in seating, ' +
+      'an ornamental garden focal point, elaborate specimen planting beds, a manicured ' +
+      'wave-pattern lawn, and natural stepping stone pathways. A resort-park aesthetic for the community.',
+    pros: [
+      'Premium resort-park aesthetic — feels like a private club amenity',
+      'Covered pavilion with built-in seating drives regular daily use',
+      'Manicured wave-pattern lawn is a visual community showpiece',
+      'Quiet retreat character — excellent for seniors and social gatherings',
+      'Strong community pride and significant curb appeal boost',
+      'Great for HOA events, picnics, and casual social gatherings'
+    ],
+    cons: [
+      'Elaborate landscaping = highest ongoing maintenance cost of any passive option',
+      'No active sport element — residents who used tennis courts lose their amenity',
+      'Ornamental focal pieces can invite vandalism',
+      'Less engagement from younger and more active residents',
+      'Higher budget than Option B with somewhat incremental benefit'
+    ]
+  },
+  {
+    id: 'D', visible: true,
+    name: 'Rec Area + Bocce Courts',
+    image: '4. REC-AREA-BOCCE.jpg',
+    budget: '~130% – 200% of Baseline',
+    budgetClass: 'budget-d',
+    tag: '+30% to +100%',
+    tagColor: '#b07d00',
+    description: 'Demo courts and build 2–3 bocce court lanes with timber borders, ' +
+      'cornhole hardscape pads, an open lawn area, a timber shelter or gazebo, ' +
+      'a circular gathering patio, and perimeter landscaping. Activity-focused with a strong social hub.',
+    pros: [
+      'Bocce is one of the fastest-growing HOA amenities in the US',
+      'Appeals strongly to adults 40+ and retirees — very inclusive',
+      'Multiple activities in one space: bocce, cornhole, open lawn, shelter',
+      'Shelter + circular patio creates a strong social gathering atmosphere',
+      'Unique differentiator compared to typical HOA amenities',
+      'Relatively low construction complexity'
+    ],
+    cons: [
+      'Niche appeal — bocce may not draw all demographics equally',
+      'Bocce courts require periodic re-grading (ongoing maintenance cost)',
+      'Seasonal limitation — limited use in Cincinnati winters',
+      'Less draw for families with young children',
+      'Equipment (bocce sets, cornhole bags) needs a secure storage solution'
+    ]
+  },
+  {
+    id: 'E', visible: true,
+    name: 'Multi-Purpose Court',
+    image: '5. MULTI-PURPOSE.jpg',
+    budget: '~150% – 210% of Baseline',
+    budgetClass: 'budget-e',
+    tag: '+50% to +110%',
+    tagColor: '#e06000',
+    description: 'Demo both tennis courts and replace with one large color-coded multi-sport surface ' +
+      'combining pickleball, basketball, and tennis lines — plus basketball hoops, perimeter fencing, ' +
+      'a timber shelter or gazebo, a circular gathering patio, and surrounding landscaping.',
+    pros: [
+      'Pickleball is the #1 fastest-growing sport in the US — a major HOA draw',
+      '3 sports on 1 court maximizes active use per square foot',
+      'Best option for raising community home values',
+      'Widest age range appeal: kids, teens, adults, and seniors',
+      'Year-round usability — court can be cleared in winter',
+      'Easiest to organize into leagues, tournaments, or open play schedules'
+    ],
+    cons: [
+      'Most hardscape-heavy option — least "green park" feel',
+      'Pickleball noise can be a concern for adjacent neighbors',
+      'Multi-sport line markings can look visually busy and confusing',
+      'Ongoing crack repair and line repainting required over time',
+      'May need lighting for evening use — additional cost not included',
+      'Equipment and net storage solution required'
+    ]
+  },
+  {
+    id: 'F', visible: true,
+    name: 'Shelter + Amphitheater',
+    image: '3. SHELTER-AMPHITEATRE-AREA.jpg',
+    budget: '~250% – 380% of Baseline',
+    budgetClass: 'budget-f',
+    tag: '+150% to +280%',
+    tagColor: '#c0392b',
+    description: 'The most ambitious option: demo courts and build a large multi-bay timber pavilion, ' +
+      'a tiered outdoor amphitheater with stepped bench seating on an earthen berm, ' +
+      'a circular fire pit gathering patio, a large hardscape platform, and elaborate tropical mixed landscaping.',
+    pros: [
+      'Most dramatic transformation — creates a true community destination',
+      'Amphitheater enables concerts, outdoor movies, HOA meetings, and seasonal events',
+      'Creates a lasting community identity and strong neighborhood pride',
+      'Circular fire pit patio provides a year-round social hub',
+      'Best long-term ROI if the community holds regular organized events',
+      'Prestigious aesthetic — can attract buyers and increase property values'
+    ],
+    cons: [
+      'Highest budget of all options by a significant margin',
+      'Amphitheater requires active programming to justify the investment',
+      'Event noise can create conflicts with adjacent neighbors',
+      'Longest construction timeline and most complex permitting process',
+      'Highest ongoing maintenance burden of all options',
+      'Without regular programming, becomes the most expensive underused amenity'
+    ]
+  }
+];
 
 // ── Auth helpers ─────────────────────────────────────────────────────────────
 function makeAuthToken() {
@@ -84,6 +253,28 @@ app.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
+// ── Config helpers ────────────────────────────────────────────────────────────
+function loadConfig() {
+  if (!fs.existsSync(CONFIG_FILE)) return DEFAULT_OPTIONS.map(o => Object.assign({}, o));
+  try {
+    const raw = fs.readFileSync(CONFIG_FILE, 'utf8');
+    if (!raw.trim()) return DEFAULT_OPTIONS.map(o => Object.assign({}, o));
+    const stored = JSON.parse(raw);
+    // Merge with defaults so any new fields added to defaults are picked up
+    return DEFAULT_OPTIONS.map(def => {
+      const override = stored.find(s => s.id === def.id);
+      return override ? Object.assign({}, def, override) : Object.assign({}, def);
+    });
+  } catch {
+    return DEFAULT_OPTIONS.map(o => Object.assign({}, o));
+  }
+}
+
+function saveConfig(cfg) {
+  ensureDataDir();
+  fs.writeFileSync(CONFIG_FILE, JSON.stringify(cfg, null, 2), 'utf8');
+}
+
 // ── Vote file helpers ────────────────────────────────────────────────────────
 function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -145,6 +336,12 @@ app.post('/api/vote', (req, res) => {
     return res.status(400).json({ error: 'Invalid option selection.' });
   }
 
+  // Also ensure only currently-visible options can receive new votes
+  const visibleIds = loadConfig().filter(o => o.visible !== false).map(o => o.id);
+  if (!visibleIds.includes(first) || !visibleIds.includes(second)) {
+    return res.status(400).json({ error: 'That option is not available for this vote.' });
+  }
+
   if (first === second) {
     return res.status(400).json({ error: '1st and 2nd choices must be different options.' });
   }
@@ -171,6 +368,37 @@ app.post('/api/vote', (req, res) => {
 
   saveVotes(votes);
   res.json({ success: true, updated: votes[houseKey].updated });
+});
+
+// ── API: Public option config (visible options only) ─────────────────────────
+app.get('/api/config', (req, res) => {
+  const cfg = loadConfig();
+  res.json(cfg.filter(o => o.visible !== false));
+});
+
+// ── API: Admin — get full option config ───────────────────────────────────────
+app.get('/api/admin/config', (req, res) => {
+  res.json(loadConfig());
+});
+
+// ── API: Admin — save option config ──────────────────────────────────────────
+app.post('/api/admin/config', (req, res) => {
+  const cfg = req.body;
+  if (!Array.isArray(cfg) || cfg.length === 0)
+    return res.status(400).json({ error: 'Invalid config format.' });
+  for (const opt of cfg) {
+    if (!opt.id || !VALID_OPTIONS.includes(opt.id) || typeof opt.visible !== 'boolean' ||
+        typeof opt.name !== 'string' || typeof opt.description !== 'string' ||
+        !Array.isArray(opt.pros) || !Array.isArray(opt.cons))
+      return res.status(400).json({ error: `Invalid config for option "${opt.id}".` });
+    // Sanitize string lengths
+    opt.name        = String(opt.name).substring(0, 100);
+    opt.description = String(opt.description).substring(0, 2000);
+    opt.pros        = opt.pros.map(p => String(p).substring(0, 300)).filter(p => p.trim());
+    opt.cons        = opt.cons.map(c => String(c).substring(0, 300)).filter(c => c.trim());
+  }
+  saveConfig(cfg);
+  res.json({ success: true });
 });
 
 // ── API: Stats (total count only — no results shown to avoid influencing votes) ──

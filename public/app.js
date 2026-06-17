@@ -1,7 +1,9 @@
 'use strict';
 
-// ── Option Data ──────────────────────────────────────────────────────────────
-const OPTIONS = [
+// ── Option Data (loaded from server via /api/config) ──────────────────────────
+let OPTIONS = [];
+
+const _STUB_OPTIONS = [
   {
     id: 'A',
     name: 'Surface Only',
@@ -174,11 +176,22 @@ let secondChoice = null;
 let overlayOptionId = null;
 
 // ── Init ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadOptions();
   renderCards();
   fetchStats();
   setupCommentCounter();
 });
+
+async function loadOptions() {
+  try {
+    const res = await fetch('/api/config');
+    if (!res.ok) throw new Error('config fetch failed');
+    OPTIONS = await res.json();
+  } catch {
+    OPTIONS = _STUB_OPTIONS; // fall back to built-in data if server unreachable
+  }
+}
 
 // ── Render Cards ─────────────────────────────────────────────────────────────
 function renderCards() {

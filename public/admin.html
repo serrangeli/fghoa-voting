@@ -76,6 +76,57 @@
     .upload-area input[type=file] { display: none; }
     .upload-area .upload-hint { font-size: 0.85rem; color: #666; }
 
+  /* Option Config */
+    .config-grid { display: grid; gap: 16px; }
+    .opt-config-row {
+      border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; transition: border-color 0.2s;
+    }
+    .opt-config-row.hidden-opt { opacity: 0.55; }
+    .opt-config-header {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--bg); padding: 12px 16px; cursor: pointer;
+      user-select: none;
+    }
+    .opt-config-header:hover { background: #e8ecf0; }
+    .opt-badge { font-weight: 800; font-size: 1rem; color: var(--navy); width: 28px; flex-shrink: 0; }
+    .opt-config-name { flex: 1; font-weight: 600; font-size: 0.9rem; color: #222; }
+    .opt-hidden-label { font-size: 0.75rem; color: #999; font-style: italic; }
+    .toggle-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .toggle-label { font-size: 0.8rem; color: #555; }
+    .toggle-switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0; background: #ccc;
+      border-radius: 24px; cursor: pointer; transition: background 0.2s;
+    }
+    .toggle-track::before {
+      content: ''; position: absolute;
+      width: 18px; height: 18px; border-radius: 50%; background: #fff;
+      top: 3px; left: 3px; transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-track { background: var(--green); }
+    .toggle-switch input:checked + .toggle-track::before { transform: translateX(18px); }
+    .chevron { font-size: 0.75rem; color: #999; transition: transform 0.2s; }
+    .opt-config-body { padding: 16px; display: none; border-top: 1px solid var(--border); }
+    .opt-config-body.expanded { display: block; }
+    .config-field { margin-bottom: 14px; }
+    .config-field label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--navy); margin-bottom: 5px; }
+    .config-field input[type=text],
+    .config-field textarea {
+      width: 100%; padding: 8px 10px; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.85rem; font-family: inherit;
+      resize: vertical; transition: border-color 0.2s;
+    }
+    .config-field input[type=text]:focus,
+    .config-field textarea:focus { outline: none; border-color: var(--navy); }
+    .config-field .field-hint { font-size: 0.75rem; color: #888; margin-top: 4px; }
+    .pros-cons-edit { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .pros-cons-edit { grid-template-columns: 1fr; } }
+    .config-save-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+    .config-reset-link { font-size: 0.78rem; color: #999; cursor: pointer; text-decoration: underline; }
+    .config-reset-link:hover { color: var(--navy); }
+
     .msg { margin-top: 10px; font-size: 0.85rem; min-height: 18px; }
     .msg.ok  { color: var(--green); font-weight: 600; }
     .msg.err { color: #c62828; font-weight: 600; }
@@ -153,6 +204,23 @@
       </div>
       <div class="msg" id="importMsg"></div>
     </div>
+  </div>
+
+  <!-- ── OPTION CONFIGURATION ────────────────────────────────────── -->
+  <div class="card">
+    <h2>⚙️ Option Configuration</h2>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:16px">
+      Show or hide options on the public voting page, and edit their name, description, pros, and cons.
+      Changes take effect immediately — voters will only see visible options.
+    </p>
+    <div class="config-grid" id="configGrid">
+      <div style="text-align:center;color:#999;padding:20px">Loading options…</div>
+    </div>
+    <div class="config-save-row" style="margin-top:18px">
+      <button class="btn btn-primary" onclick="saveConfig()">💾 Save Configuration</button>
+      <span class="config-reset-link" onclick="resetConfig()">Reset all to defaults</span>
+    </div>
+    <div class="msg" id="configMsg"></div>
   </div>
 
   <!-- ── DANGER ZONE ──────────────────────────────────────────────── -->
@@ -299,6 +367,148 @@ async function clearVotes() {
 // Load on init and refresh every 30s
 loadResults();
 setInterval(loadResults, 30000);
+
+// ── Option Configuration ──────────────────────────────────────────────────────
+let configData = [];
+
+async function loadConfig() {
+  try {
+    const res = await fetch('/api/admin/config');
+    configData = await res.json();
+    renderConfigGrid();
+  } catch (e) {
+    document.getElementById('configGrid').innerHTML =
+      '<div style="color:#c62828">Failed to load option config.</div>';
+  }
+}
+
+function renderConfigGrid() {
+  document.getElementById('configGrid').innerHTML = configData.map((opt, i) => `
+    <div class="opt-config-row ${opt.visible === false ? 'hidden-opt' : ''}" id="cfg-row-${opt.id}">
+      <div class="opt-config-header" onclick="toggleCfgBody('${opt.id}')">
+        <span class="opt-badge">${opt.id}</span>
+        <span class="opt-config-name" id="cfg-display-name-${opt.id}">${escHtml(opt.name)}</span>
+        <span class="opt-hidden-label" id="cfg-hidden-lbl-${opt.id}">${opt.visible === false ? 'Hidden' : ''}</span>
+        <div class="toggle-wrap" onclick="event.stopPropagation()">
+          <span class="toggle-label">Visible</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="cfg-vis-${opt.id}" ${opt.visible !== false ? 'checked' : ''}
+              onchange="onVisChange('${opt.id}')">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <span class="chevron" id="chev-${opt.id}">▶</span>
+      </div>
+      <div class="opt-config-body" id="cfg-body-${opt.id}">
+        <div class="config-field">
+          <label>Option Name</label>
+          <input type="text" id="cfg-name-${opt.id}" value="${escAttr(opt.name)}" maxlength="100"
+            oninput="document.getElementById('cfg-display-name-${opt.id}').textContent=this.value||'Option ${opt.id}'">
+        </div>
+        <div class="config-field">
+          <label>Description</label>
+          <textarea id="cfg-desc-${opt.id}" rows="4" maxlength="2000">${escHtml(opt.description)}</textarea>
+        </div>
+        <div class="pros-cons-edit">
+          <div class="config-field">
+            <label>✅ Pros</label>
+            <textarea id="cfg-pros-${opt.id}" rows="7" maxlength="3000"
+              placeholder="One pro per line">${(opt.pros || []).map(escHtml).join('\n')}</textarea>
+            <div class="field-hint">One item per line</div>
+          </div>
+          <div class="config-field">
+            <label>❌ Cons</label>
+            <textarea id="cfg-cons-${opt.id}" rows="7" maxlength="3000"
+              placeholder="One con per line">${(opt.cons || []).map(escHtml).join('\n')}</textarea>
+            <div class="field-hint">One item per line</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleCfgBody(id) {
+  const body = document.getElementById(`cfg-body-${id}`);
+  const chev = document.getElementById(`chev-${id}`);
+  const expanded = body.classList.toggle('expanded');
+  chev.textContent = expanded ? '▼' : '▶';
+  chev.style.transform = '';
+}
+
+function onVisChange(id) {
+  const checked = document.getElementById(`cfg-vis-${id}`).checked;
+  document.getElementById(`cfg-row-${id}`).classList.toggle('hidden-opt', !checked);
+  document.getElementById(`cfg-hidden-lbl-${id}`).textContent = checked ? '' : 'Hidden';
+}
+
+function buildConfigPayload() {
+  return configData.map(opt => ({
+    id:          opt.id,
+    visible:     document.getElementById(`cfg-vis-${opt.id}`).checked,
+    name:        document.getElementById(`cfg-name-${opt.id}`).value.trim() || opt.name,
+    image:       opt.image,
+    budget:      opt.budget,
+    budgetClass: opt.budgetClass,
+    tag:         opt.tag,
+    tagColor:    opt.tagColor,
+    description: document.getElementById(`cfg-desc-${opt.id}`).value.trim(),
+    pros:        document.getElementById(`cfg-pros-${opt.id}`).value.split('\n').map(l => l.trim()).filter(Boolean),
+    cons:        document.getElementById(`cfg-cons-${opt.id}`).value.split('\n').map(l => l.trim()).filter(Boolean)
+  }));
+}
+
+async function saveConfig() {
+  const payload = buildConfigPayload();
+  const msgEl   = document.getElementById('configMsg');
+  try {
+    const res  = await fetch('/api/admin/config', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      configData = payload;
+      msgEl.className = 'msg ok';
+      msgEl.textContent = '✓ Configuration saved successfully.';
+      setTimeout(() => { msgEl.textContent = ''; }, 3000);
+    } else {
+      msgEl.className = 'msg err';
+      msgEl.textContent = data.error || 'Save failed.';
+    }
+  } catch {
+    msgEl.className = 'msg err';
+    msgEl.textContent = 'Network error — could not save.';
+  }
+}
+
+async function resetConfig() {
+  if (!confirm('Reset all option names, descriptions, pros and cons back to their original defaults?')) return;
+  try {
+    const res  = await fetch('/api/admin/config');
+    // Reload from server (which merges with defaults)
+    configData = await res.json();
+    // Reset visibility to all visible, re-fetch actual defaults from server defaults
+    const resetRes = await fetch('/api/admin/config');
+    configData = await resetRes.json();
+    renderConfigGrid();
+    document.getElementById('configMsg').className = 'msg ok';
+    document.getElementById('configMsg').textContent = '✓ Reloaded from server. Click Save to apply.';
+    setTimeout(() => { document.getElementById('configMsg').textContent = ''; }, 3000);
+  } catch {
+    document.getElementById('configMsg').className = 'msg err';
+    document.getElementById('configMsg').textContent = 'Network error.';
+  }
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(str) {
+  return String(str).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+loadConfig();
 </script>
 </body>
 </html>
