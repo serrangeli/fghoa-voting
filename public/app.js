@@ -37,7 +37,7 @@ const _STUB_OPTIONS = [
     image: '1. SIMPLE-REC-AREA.jpg',
     budget: '~90% – 110% of Baseline',
     budgetClass: 'budget-b',
-    tag: '⭐ Best Value',
+    tag: '-10% to +10%',
     tagColor: '#28a745',
     description: 'Remove both tennis courts and replace with an open green lawn, a prefab timber ' +
       'pavilion with outdoor furniture, a curved hardscape patio, a stone walkway, and moderate landscaping. ' +
