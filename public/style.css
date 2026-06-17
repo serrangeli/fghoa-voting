@@ -717,7 +717,7 @@ body {
   flex-shrink: 0;
 }
 
-.qr-code-wrap canvas, .qr-code-wrap img {
+.qr-code-wrap canvas, .qr-code-wrap img, .qr-code-wrap > div {
   border-radius: 10px;
   border: 3px solid var(--navy);
   display: block;
