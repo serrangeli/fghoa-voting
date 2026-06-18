@@ -13,16 +13,36 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: url('/images/fglogo.jpg') center 40% / cover no-repeat;
+      background: #1a3a5c;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       padding: 20px;
     }
 
-    body::before {
+    .bg-banner {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 0;
+    }
+
+    .bg-banner img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .bg-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(26,58,92,0.55) 0%, rgba(44,95,46,0.45) 100%);
+    }
+
+    /* Dark fill below the banner */
+    body::after {
       content: '';
       position: fixed;
       inset: 0;
-      background: linear-gradient(135deg, rgba(26,58,92,0.72) 0%, rgba(44,95,46,0.60) 100%);
+      background: linear-gradient(180deg, transparent 0%, #1a3a5c 40%);
       z-index: 0;
     }
 
@@ -127,6 +147,11 @@
   </style>
 </head>
 <body>
+
+  <!-- FG logo banner pinned to top -->
+  <div class="bg-banner">
+    <img src="/images/fglogo.jpg" alt="">
+  </div>
 
   <div class="login-card">
     <h1>Fallsington Grant HOA</h1>
