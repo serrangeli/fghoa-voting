@@ -13,12 +13,22 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #1a3a5c 0%, #2c5f2e 100%);
+      background: url('/images/fglogo.jpg') center 40% / cover no-repeat;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       padding: 20px;
     }
 
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(26,58,92,0.72) 0%, rgba(44,95,46,0.60) 100%);
+      z-index: 0;
+    }
+
     .login-card {
+      position: relative;
+      z-index: 1;
       background: #fff;
       border-radius: 18px;
       padding: 40px 36px 36px;
@@ -109,15 +119,16 @@
     footer {
       margin-top: 24px;
       font-size: 0.75rem;
-      color: rgba(255,255,255,0.55);
+      color: rgba(255,255,255,0.75);
       text-align: center;
+      position: relative;
+      z-index: 1;
     }
   </style>
 </head>
 <body>
 
   <div class="login-card">
-    <div class="login-logo">🏘️</div>
     <h1>Fallsington Grant HOA</h1>
     <p class="sub">Recreation Area Redevelopment &mdash; Community Vote 2026</p>
 
