@@ -466,6 +466,7 @@ body {
 .input-wrap { position: relative; }
 
 .form-row input[type="text"],
+.form-row input[type="email"],
 .form-row textarea {
   width: 100%;
   padding: 10px 14px;
@@ -480,6 +481,7 @@ body {
 }
 
 .form-row input[type="text"]:focus,
+.form-row input[type="email"]:focus,
 .form-row textarea:focus {
   outline: none;
   border-color: var(--green-mid);
