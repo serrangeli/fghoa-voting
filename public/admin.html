@@ -174,10 +174,10 @@
         <thead>
           <tr>
             <th>House</th><th>1st Choice</th><th>2nd Choice</th>
-            <th>Timestamp</th><th>Comment</th><th>Status</th>
+            <th>Timestamp</th><th>Comment</th><th>Email</th><th>Status</th>
           </tr>
         </thead>
-        <tbody id="votesBody"><tr><td colspan="6" style="text-align:center;color:#999">Loading…</td></tr></tbody>
+        <tbody id="votesBody"><tr><td colspan="7" style="text-align:center;color:#999">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -238,16 +238,23 @@
 </div>
 
 <script>
-const OPTIONS = {
-  A: 'Surface Only',
-  B: 'Simple Rec Area',
-  C: 'Shelter Only Area',
-  D: 'Rec Area + Bocce',
-  E: 'Multi-Purpose Court',
-  F: 'Shelter + Amphitheater'
-};
-const COLORS_FIRST  = { A:'#6c757d', B:'#28a745', C:'#7cb518', D:'#e0a800', E:'#fd7e14', F:'#dc3545' };
-const COLORS_SECOND = { A:'#adb5bd', B:'#71c77e', C:'#b5e060', D:'#ffc940', E:'#ffaa70', F:'#ed7f7f' };
+let OPTIONS       = {};
+let COLORS_FIRST  = {};
+let COLORS_SECOND = {};
+
+const PALETTE_FIRST  = ['#6c757d','#28a745','#7cb518','#e0a800','#fd7e14','#dc3545','#1e5a9c','#9c3d9c'];
+const PALETTE_SECOND = ['#adb5bd','#71c77e','#b5e060','#ffc940','#ffaa70','#ed7f7f','#7ec8f0','#cf9ccf'];
+
+function buildOptionMaps(allOpts) {
+  OPTIONS = {};
+  COLORS_FIRST  = {};
+  COLORS_SECOND = {};
+  allOpts.forEach((o, i) => {
+    OPTIONS[o.id]       = o.name;
+    COLORS_FIRST[o.id]  = o.tagColor || PALETTE_FIRST[i % PALETTE_FIRST.length];
+    COLORS_SECOND[o.id] = PALETTE_SECOND[i % PALETTE_SECOND.length];
+  });
+}
 
 let importData = null;
 
@@ -284,16 +291,17 @@ function renderBars(containerId, tally, total, colors, cls) {
 function renderVoteTable(votes) {
   const rows = Object.values(votes).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
   if (!rows.length) {
-    document.getElementById('votesBody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">No votes yet.</td></tr>';
+    document.getElementById('votesBody').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999">No votes yet.</td></tr>';
     return;
   }
   document.getElementById('votesBody').innerHTML = rows.map(v => `
     <tr>
       <td><strong>${v.house}</strong></td>
-      <td><span class="badge-first">${v.first} — ${OPTIONS[v.first]}</span></td>
-      <td><span class="badge-second">${v.second} — ${OPTIONS[v.second]}</span></td>
+      <td><span class="badge-first">${v.first} — ${OPTIONS[v.first] || v.first}</span></td>
+      <td><span class="badge-second">${v.second} — ${OPTIONS[v.second] || v.second}</span></td>
       <td style="white-space:nowrap;font-size:0.78rem;color:#666">${new Date(v.timestamp).toLocaleString()}</td>
       <td class="comment-cell">${v.comment ? v.comment : '<span style="color:#ccc">—</span>'}</td>
+      <td style="font-size:0.78rem;color:#555">${v.email ? v.email : '<span style="color:#ccc">—</span>'}</td>
       <td>${v.updated ? '<span class="updated-badge">Updated</span>' : ''}</td>
     </tr>
   `).join('');
@@ -365,7 +373,6 @@ async function clearVotes() {
 }
 
 // Load on init and refresh every 30s
-loadResults();
 setInterval(loadResults, 30000);
 
 // ── Option Configuration ──────────────────────────────────────────────────────
@@ -375,7 +382,9 @@ async function loadConfig() {
   try {
     const res = await fetch('/api/admin/config');
     configData = await res.json();
+    buildOptionMaps(configData);
     renderConfigGrid();
+    loadResults();
   } catch (e) {
     document.getElementById('configGrid').innerHTML =
       '<div style="color:#c62828">Failed to load option config.</div>';
