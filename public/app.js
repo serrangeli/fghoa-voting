@@ -399,7 +399,7 @@ async function submitVote(forceUpdate = false) {
       const sOpt = OPTIONS.find(o => o.id === secondChoice);
       document.getElementById('successTitle').textContent = data.updated ? 'Opinion Updated!' : 'Opinion Recorded!';
       document.getElementById('successDetails').innerHTML = `
-        <p>Thank you, house <strong>${house}</strong>!</p>
+        <p>Thank you!</p>
         <p style="margin-top:8px">
           🥇 1st Choice: <strong>Option ${firstChoice} — ${fOpt.name}</strong><br>
           🥈 2nd Choice: <strong>Option ${secondChoice} — ${sOpt.name}</strong>
