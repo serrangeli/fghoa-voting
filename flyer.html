@@ -6,7 +6,17 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Open+Sans:wght@400;600&display=swap');
 
+    @page {
+      size: 8.5in 11in;
+      margin: 0;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 8.5in;
+      height: 11in;
+    }
 
     body {
       font-family: 'Open Sans', sans-serif;
@@ -19,7 +29,7 @@
 
     .flyer {
       width: 8.5in;
-      min-height: 11in;
+      height: 11in;
       background: #ffffff;
       box-shadow: 0 4px 32px rgba(0,0,0,0.18);
       display: flex;
@@ -30,7 +40,8 @@
     /* ── Hero (full-width image with overlay) ── */
     .hero {
       position: relative;
-      height: 300px;
+      height: 220px;
+      flex-shrink: 0;
       overflow: hidden;
       color: white;
       text-align: center;
@@ -64,20 +75,20 @@
 
     .hero-eyebrow {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 3px;
       text-transform: uppercase;
       color: #7ec8f0;
-      margin-bottom: 14px;
+      margin-bottom: 8px;
     }
 
     .hero h2 {
       font-family: 'Montserrat', sans-serif;
-      font-size: 2.6rem;
+      font-size: 2rem;
       font-weight: 900;
       line-height: 1.15;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
       text-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 
@@ -86,20 +97,21 @@
     }
 
     .hero p {
-      font-size: 1.05rem;
+      font-size: 0.9rem;
       color: #e8f4ff;
       max-width: 600px;
-      line-height: 1.65;
+      line-height: 1.5;
       text-shadow: 0 1px 4px rgba(0,0,0,0.5);
     }
 
     /* ── Body ── */
     .body {
       flex: 1;
-      padding: 44px 48px;
+      padding: 28px 36px;
       display: flex;
-      gap: 44px;
+      gap: 32px;
       align-items: flex-start;
+      min-height: 0;
     }
 
     /* ── Left column ── */
@@ -119,35 +131,35 @@
 
     .left h3 {
       font-family: 'Montserrat', sans-serif;
-      font-size: 1.35rem;
+      font-size: 1.1rem;
       font-weight: 800;
       color: #1a3a5c;
       line-height: 1.3;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
 
     .left p {
-      font-size: 0.92rem;
+      font-size: 0.83rem;
       color: #444;
-      line-height: 1.7;
-      margin-bottom: 14px;
+      line-height: 1.6;
+      margin-bottom: 10px;
     }
 
     .options-list {
-      margin: 20px 0 24px;
+      margin: 12px 0 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 7px;
     }
 
     .option-item {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       background: #f4f7fb;
       border-left: 4px solid #1e5a9c;
       border-radius: 0 6px 6px 0;
-      padding: 10px 14px;
+      padding: 7px 12px;
     }
 
     .option-item .opt-letter {
@@ -177,16 +189,16 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 7px;
     }
 
     .how-list li {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: flex-start;
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       color: #333;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     .how-list li .step-num {
@@ -218,7 +230,7 @@
     .qr-card {
       background: #1a3a5c;
       border-radius: 16px;
-      padding: 24px 20px 20px;
+      padding: 16px 16px 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -238,33 +250,33 @@
 
     .qr-card .qr-title {
       font-family: 'Montserrat', sans-serif;
-      font-size: 1rem;
+      font-size: 0.88rem;
       font-weight: 800;
       color: white;
       text-align: center;
       line-height: 1.3;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .qr-box {
       background: white;
       border-radius: 10px;
-      padding: 10px;
-      width: 160px;
-      height: 160px;
+      padding: 8px;
+      width: 140px;
+      height: 140px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .qr-box img {
-      width: 140px;
-      height: 140px;
+      width: 124px;
+      height: 124px;
     }
 
     .qr-card .qr-url {
-      margin-top: 14px;
-      font-size: 0.72rem;
+      margin-top: 10px;
+      font-size: 0.68rem;
       color: #a8c8e8;
       text-align: center;
       word-break: break-all;
@@ -272,18 +284,18 @@
     }
 
     .qr-card .qr-sub {
-      margin-top: 8px;
-      font-size: 0.7rem;
+      margin-top: 6px;
+      font-size: 0.65rem;
       color: #7ec8f0;
       text-align: center;
       line-height: 1.4;
     }
 
     .deadline-box {
-      margin-top: 16px;
+      margin-top: 12px;
       background: #f0c040;
       border-radius: 10px;
-      padding: 14px 16px;
+      padding: 10px 14px;
       width: 100%;
       text-align: center;
     }
@@ -310,17 +322,18 @@
     .footer {
       background: #f0f4f8;
       border-top: 2px solid #d0dce8;
-      padding: 18px 48px;
+      padding: 12px 36px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
+      flex-shrink: 0;
     }
 
     .footer p {
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       color: #666;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     .footer .highlight {
@@ -332,8 +345,8 @@
 
     /* ── Print ── */
     @media print {
-      body { background: white; padding: 0; }
-      .flyer { box-shadow: none; width: 100%; min-height: 100vh; }
+      body { background: white; padding: 0; width: 8.5in; height: 11in; }
+      .flyer { box-shadow: none; width: 8.5in; height: 11in; }
     }
   </style>
 </head>
