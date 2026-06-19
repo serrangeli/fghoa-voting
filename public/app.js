@@ -281,7 +281,7 @@ function openOverlay(optionId) {
         <div class="overlay-title">${opt.name}</div>
         <span class="overlay-budget-pill ${opt.budgetClass}">${opt.tag}</span>
       </div>
-      <div class="overlay-option-label">Option ${opt.id} &nbsp;·&nbsp; <strong>${opt.budget}</strong></div>
+      <div class="overlay-option-label">Option ${opt.id}</div>
       <p class="overlay-description">${opt.description}</p>
       <div class="pros-cons-grid">
         <div class="pros-box">
