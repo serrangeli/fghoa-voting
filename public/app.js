@@ -35,108 +35,87 @@ const _STUB_OPTIONS = [
     id: 'B',
     name: 'Simple Rec Area',
     image: '1. SIMPLE-REC-AREA.jpg',
-    budget: '~90% – 110% of Baseline',
+    budget: 'Shorter timeline · Lower cost',
     budgetClass: 'budget-b',
-    tag: '-10% to +10%',
+    tag: 'Flexible Lawn + Shelter',
     tagColor: '#28a745',
     description: 'Remove both tennis courts and replace with an open green lawn, a prefab timber ' +
-      'pavilion with outdoor furniture, a curved hardscape patio, a stone walkway, and moderate landscaping. ' +
+      'shelter with outdoor furniture, a curved hardscape patio, a stone walkway, and moderate landscaping. ' +
       'A complete visual transformation for essentially the same budget as just resurfacing.',
     pros: [
-      'Biggest visual transformation for essentially the same budget as resurfacing',
-      'Pavilion + furniture creates an immediate community gathering hub',
+      'Shelter + furniture creates an immediate community gathering hub',
       'Open lawn is flexible — events, kids play, yoga, informal sports, cornhole',
-      'Appeals to all ages and all family types',
-      'Low permitting complexity — fast approval',
-      'Relatively fast construction timeline'
+      'Low permitting complexity — fast approval'
     ],
     cons: [
       'No dedicated active sport or recreation element remains',
-      'Lawn adds a modest ongoing mowing/maintenance cost',
       'No strong destination draw beyond residents\' own backyards',
-      'May not satisfy sport-oriented residents who used the tennis courts',
-      'Pavilion can feel underused without organized community programming'
+      'Shelter can feel underused without organized community programming'
     ]
   },
   {
     id: 'C',
     name: 'Shelter Only Area',
     image: '2. SHELTER-ONLY-AREA.jpg',
-    budget: '~125% – 180% of Baseline',
+    budget: 'Shorter timeline · Medium cost',
     budgetClass: 'budget-c',
-    tag: '+25% to +80%',
+    tag: 'Premium Shelter + Garden',
     tagColor: '#7cb518',
-    description: 'Demo courts and replace with a larger custom timber pavilion with built-in seating, ' +
+    description: 'Demo courts and replace with a larger custom timber premium shelter with built-in seating, ' +
       'an ornamental garden focal point, elaborate specimen planting beds, a manicured ' +
       'wave-pattern lawn, and natural stepping stone pathways. A resort-park aesthetic for the community.',
     pros: [
       'Premium resort-park aesthetic — feels like a private club amenity',
-      'Covered pavilion with built-in seating drives regular daily use',
-      'Manicured wave-pattern lawn is a visual community showpiece',
-      'Quiet retreat character — excellent for seniors and social gatherings',
-      'Strong community pride and significant curb appeal boost',
-      'Great for HOA events, picnics, and casual social gatherings'
+      'Covered premium shelter with built-in seating drives regular daily use — great for resident events',
+      'Quiet retreat character — excellent for seniors and social gatherings'
     ],
     cons: [
       'Elaborate landscaping = highest ongoing maintenance cost of any passive option',
       'No active sport element — residents who used tennis courts lose their amenity',
-      'Ornamental focal pieces can invite vandalism',
-      'Less engagement from younger and more active residents',
-      'Higher budget than Option B with somewhat incremental benefit'
+      'Less engagement from younger and more active residents'
     ]
   },
   {
     id: 'D',
     name: 'Rec Area + Bocce Courts',
     image: '4. REC-AREA-BOCCE.jpg',
-    budget: '~130% – 200% of Baseline',
+    budget: 'Medium timeline · Medium cost',
     budgetClass: 'budget-d',
-    tag: '+30% to +100%',
+    tag: 'Bocce + Social Hub',
     tagColor: '#b07d00',
     description: 'Demo courts and build 2–3 bocce court lanes with timber borders, ' +
       'cornhole hardscape pads, an open lawn area, a timber shelter or gazebo, ' +
       'a circular gathering patio, and perimeter landscaping. Activity-focused with a strong social hub.',
     pros: [
       'Bocce is one of the fastest-growing HOA amenities in the US',
-      'Appeals strongly to adults 40+ and retirees — very inclusive',
       'Multiple activities in one space: bocce, cornhole, open lawn, shelter',
-      'Shelter + circular patio creates a strong social gathering atmosphere',
-      'Unique differentiator compared to typical HOA amenities',
-      'Relatively low construction complexity'
+      'Shelter + circular patio creates a strong social gathering atmosphere'
     ],
     cons: [
       'Niche appeal — bocce may not draw all demographics equally',
       'Bocce courts require periodic re-grading (ongoing maintenance cost)',
-      'Seasonal limitation — limited use in Cincinnati winters',
-      'Less draw for families with young children',
-      'Equipment (bocce sets, cornhole bags) needs a secure storage solution'
+      'Less draw for families with young children'
     ]
   },
   {
     id: 'E',
     name: 'Multi-Purpose Court',
     image: '5. MULTI-PURPOSE.jpg',
-    budget: '~150% – 210% of Baseline',
+    budget: 'Longer timeline · Higher cost',
     budgetClass: 'budget-e',
-    tag: '+50% to +110%',
+    tag: 'Multi-Sport Court + Community Shelter',
     tagColor: '#e06000',
     description: 'Demo both tennis courts and replace with one large color-coded multi-sport surface ' +
       'combining pickleball, basketball, and tennis lines — plus basketball hoops, perimeter fencing, ' +
       'a timber shelter or gazebo, a circular gathering patio, and surrounding landscaping.',
     pros: [
       'Pickleball is the #1 fastest-growing sport in the US — a major HOA draw',
-      '3 sports on 1 court maximizes active use per square foot',
       'Best option for raising community home values',
-      'Widest age range appeal: kids, teens, adults, and seniors',
-      'Year-round usability — court can be cleared in winter',
-      'Easiest to organize into leagues, tournaments, or open play schedules'
+      'Widest age range appeal: kids, teens, adults, and seniors'
     ],
     cons: [
       'Most hardscape-heavy option — least "green park" feel',
       'Pickleball noise can be a concern for adjacent neighbors',
-      'Multi-sport line markings can look visually busy and confusing',
-      'Ongoing crack repair and line repainting required over time',
-      'May need lighting for evening use — additional cost not included',
       'Equipment and net storage solution required'
     ]
   },
@@ -210,7 +189,6 @@ function renderCards() {
 
       <div class="card-body">
         <div class="card-title" onclick="openOverlay('${opt.id}')">${opt.name}</div>
-        <div class="card-budget-text">Budget vs. baseline: <strong>${opt.budget}</strong></div>
       </div>
 
       <div class="card-vote-row">
@@ -303,7 +281,7 @@ function openOverlay(optionId) {
         <div class="overlay-title">${opt.name}</div>
         <span class="overlay-budget-pill ${opt.budgetClass}">${opt.tag}</span>
       </div>
-      <div class="overlay-option-label">Option ${opt.id} &nbsp;·&nbsp; Budget vs. baseline: <strong>${opt.budget}</strong></div>
+      <div class="overlay-option-label">Option ${opt.id} &nbsp;·&nbsp; <strong>${opt.budget}</strong></div>
       <p class="overlay-description">${opt.description}</p>
       <div class="pros-cons-grid">
         <div class="pros-box">
@@ -374,10 +352,10 @@ async function submitVote(forceUpdate = false) {
     return showFormError('Please enter your house number.');
   }
   if (!firstChoice) {
-    return showFormError('Please select your 1st Choice from the cards above.');
+    return showFormError('Please select your 1st Choice concept from the cards above.');
   }
   if (!secondChoice) {
-    return showFormError('Please select your 2nd Choice from the cards above.');
+    return showFormError('Please select your 2nd Choice concept from the cards above.');
   }
 
   const btn = document.getElementById('submitBtn');
@@ -406,13 +384,13 @@ async function submitVote(forceUpdate = false) {
       const sOpt = OPTIONS.find(o => o.id === data.vote.second);
 
       document.getElementById('alreadyVotedDetails').innerHTML = `
-        <p>House <strong>${house}</strong> already voted on <strong>${when}</strong>.</p>
+        <p>House <strong>${house}</strong> already shared an opinion on <strong>${when}</strong>.</p>
         <p style="margin-top:8px">
           Previous 1st: <strong>Option ${data.vote.first} — ${fOpt ? fOpt.name : data.vote.first}</strong><br>
           Previous 2nd: <strong>Option ${data.vote.second} — ${sOpt ? sOpt.name : data.vote.second}</strong>
         </p>
         ${data.vote.comment ? `<p style="margin-top:8px;font-style:italic">"${data.vote.comment}"</p>` : ''}
-        <p style="margin-top:10px">Would you like to <strong>replace</strong> that vote with your current selections?</p>
+        <p style="margin-top:10px">Would you like to <strong>replace</strong> that opinion with your current selections?</p>
       `;
       openModal('alreadyVotedModal');
 
@@ -420,7 +398,7 @@ async function submitVote(forceUpdate = false) {
       // Success
       const fOpt = OPTIONS.find(o => o.id === firstChoice);
       const sOpt = OPTIONS.find(o => o.id === secondChoice);
-      document.getElementById('successTitle').textContent = data.updated ? 'Vote Updated!' : 'Vote Recorded!';
+      document.getElementById('successTitle').textContent = data.updated ? 'Opinion Updated!' : 'Opinion Recorded!';
       document.getElementById('successDetails').innerHTML = `
         <p>Thank you, house <strong>${house}</strong>!</p>
         <p style="margin-top:8px">
@@ -440,7 +418,7 @@ async function submitVote(forceUpdate = false) {
     showFormError('Network error — please check your connection and try again.');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Submit My Vote';
+    btn.textContent = 'Submit My Opinion';
   }
 }
 
@@ -457,7 +435,7 @@ async function fetchStats() {
     const data = await res.json();
     const pct  = Math.round((data.total / data.households) * 100);
     document.getElementById('voteCounter').innerHTML =
-      `🗳️ <strong>${data.total}</strong> of <strong>${data.households}</strong> households have voted &nbsp;·&nbsp; ${pct}% participation`;
+      `🗳️ <strong>${data.total}</strong> of <strong>${data.households}</strong> households have shared their opinion &nbsp;·&nbsp; ${pct}% participation`;
   } catch {
     document.getElementById('voteCounter').textContent = 'Participation count unavailable.';
   }

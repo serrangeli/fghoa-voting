@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FGHOA — Recreation Area Community Vote</title>
+  <title>FGHOA — Recreation Area Community Opinion Survey</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
@@ -17,7 +17,7 @@
         <div class="container header-inner">
           <div class="header-text">
             <h1>Fallsington Grant HOA</h1>
-            <p class="header-sub">Recreation Area Redevelopment &mdash; Community Vote 2026</p>
+            <p class="header-sub">Recreation Area Redevelopment &mdash; Community Opinion Survey 2026</p>
           </div>
           <a class="header-logout" href="/logout">Sign out</a>
         </div>
@@ -32,9 +32,9 @@
         <p>
           The recreation area <strong>behind the pool</strong> (currently 2 tennis courts) is ready for redevelopment.
           Several options have been prepared — ranging from a simple resurfacing to a full community destination.
-          Your votes will be shared with the board as a direct reflection of community preference.
+          Your opinions will be shared with the board as a direct reflection of community preference.
           The board will take them into full consideration when making its final recommendation.
-          <strong>Make your voice count — please vote.</strong>
+          <strong>Make your voice count — please share your opinion.</strong>
         </p>
         <div class="rules-grid">
           <div class="rule-item">
@@ -55,15 +55,18 @@
           </div>
           <div class="rule-item">
             <span class="rule-icon">🔒</span>
-            <span>One vote per household — you may update your vote if needed</span>
+            <span>One opinion per household — you may update it if needed</span>
           </div>
           <div class="rule-item">
             <span class="rule-icon">📊</span>
-            <span>Cards are ordered <strong>lowest → highest budget</strong> relative to the resurfacing baseline</span>
+            <span>Click any card for full details — cost &amp; timeline information is included inside</span>
           </div>
         </div>
         <div class="vote-counter" id="voteCounter">
           <span class="counter-spinner">⏳</span> Loading participation count...
+        </div>
+        <div class="disclaimer-box">
+          ⚠️ <strong>Note:</strong> Cost and timeline are key factors in the selection process. The board will weigh community preference alongside budget feasibility when making its final recommendation.
         </div>
       </div>
     </div>
@@ -80,7 +83,7 @@
   <section class="voting-form-section">
     <div class="container">
       <div class="voting-form-box" id="votingFormBox">
-        <h2>Cast Your Household's Vote</h2>
+        <h2>Share Your Household's Opinion</h2>
 
         <div class="selection-banner" id="selectionBanner">
           <div class="sel-item" id="sel-first">
@@ -95,9 +98,9 @@
         </div>
 
         <div class="form-row">
-          <label for="houseNumber">House Number <span class="required">*</span></label>
+          <label for="houseNumber">Resident Address Number <span class="required">*</span></label>
           <div class="input-wrap">
-            <input type="text" id="houseNumber" placeholder="e.g. 10782" maxlength="10" autocomplete="off" spellcheck="false">
+            <input type="text" id="houseNumber" inputmode="numeric" pattern="[0-9]*" placeholder="e.g. 10782" maxlength="5" autocomplete="street-address" spellcheck="false">
           </div>
           <div class="field-hint" id="houseHint"></div>
         </div>
@@ -105,12 +108,12 @@
         <div class="form-row">
           <label for="comment">Comment <span class="optional">(optional)</span></label>
           <textarea id="comment" rows="3" maxlength="1000"
-            placeholder="Share any thoughts, questions, or concerns about your selections..."></textarea>
+            placeholder="Share any concepts, questions, or concerns about your selections..."></textarea>
           <div class="char-count" id="charCount">0 / 1000</div>
         </div>
 
         <button class="btn-submit" id="submitBtn" onclick="submitVote()">
-          Submit My Vote
+          Submit My Opinion
         </button>
         <div class="form-message" id="formMessage"></div>
       </div>
@@ -122,8 +125,8 @@
     <div class="container">
       <div class="qr-box">
         <div class="qr-text">
-          <h3>📱 Scan to Vote on Your Phone</h3>
-          <p>Share this QR code with other household members — it opens this voting page directly.</p>
+          <h3>📱 Scan to Share Your Opinion on Your Phone</h3>
+          <p>Share this QR code with other household members — it opens this opinion survey page directly.</p>
           <div class="qr-url" id="qrUrl"></div>
           <a class="qr-logout" href="/logout">Sign out</a>
         </div>
@@ -155,10 +158,10 @@
   <div class="modal-backdrop" id="alreadyVotedModal">
     <div class="modal">
       <div class="modal-icon">⚠️</div>
-      <h3>Vote Already Recorded</h3>
+      <h3>Opinion Already Recorded</h3>
       <div id="alreadyVotedDetails" class="modal-details"></div>
       <div class="modal-actions">
-        <button class="btn-modal-primary" onclick="confirmUpdate()">Update My Vote</button>
+        <button class="btn-modal-primary" onclick="confirmUpdate()">Update My Opinion</button>
         <button class="btn-modal-secondary" onclick="closeModal('alreadyVotedModal')">Cancel</button>
       </div>
     </div>
@@ -168,7 +171,7 @@
   <div class="modal-backdrop" id="successModal">
     <div class="modal modal-success">
       <div class="modal-icon">✅</div>
-      <h3 id="successTitle">Vote Recorded!</h3>
+      <h3 id="successTitle">Opinion Recorded!</h3>
       <div id="successDetails" class="modal-details"></div>
       <button class="btn-modal-primary" onclick="closeModal('successModal')">Done</button>
     </div>
