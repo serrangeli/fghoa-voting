@@ -62,8 +62,8 @@ const _STUB_OPTIONS = [
     tag: 'Premium Shelter + Garden',
     tagColor: '#7cb518',
     description: 'Demo courts and replace with a larger custom timber premium shelter with built-in seating, ' +
-      'an ornamental garden focal point, elaborate specimen planting beds, a manicured ' +
-      'wave-pattern lawn, and natural stepping stone pathways. A resort-park aesthetic for the community.',
+      'an ornamental garden focal point, a manicured wave-pattern lawn, and natural stepping stone pathways. ' +
+      'A resort-park aesthetic for the community.',
     pros: [
       'Premium resort-park aesthetic — feels like a private club amenity',
       'Covered premium shelter with built-in seating drives regular daily use — great for resident events',
