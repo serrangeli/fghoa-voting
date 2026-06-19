@@ -5,7 +5,7 @@ let OPTIONS = [];
 
 const _STUB_OPTIONS = [
   {
-    id: 'A',
+    id: 'BACKUP1',
     name: 'Surface Only',
     image: '0. SURFACE ONLY.jpg',
     budget: '100% — Baseline',
@@ -32,7 +32,7 @@ const _STUB_OPTIONS = [
     ]
   },
   {
-    id: 'B',
+    id: 'A',
     name: 'Simple Rec Area',
     image: '1. SIMPLE-REC-AREA.jpg',
     budget: 'Shorter timeline · Lower cost',
@@ -54,7 +54,7 @@ const _STUB_OPTIONS = [
     ]
   },
   {
-    id: 'C',
+    id: 'B',
     name: 'Shelter Only Area',
     image: '2. SHELTER-ONLY-AREA.jpg',
     budget: 'Shorter timeline · Medium cost',
@@ -75,7 +75,7 @@ const _STUB_OPTIONS = [
     ]
   },
   {
-    id: 'D',
+    id: 'C',
     name: 'Rec Area + Bocce Courts',
     image: '4. REC-AREA-BOCCE.jpg',
     budget: 'Medium timeline · Medium cost',
@@ -97,7 +97,7 @@ const _STUB_OPTIONS = [
     ]
   },
   {
-    id: 'E',
+    id: 'D',
     name: 'Multi-Purpose Court',
     image: '5. MULTI-PURPOSE.jpg',
     budget: 'Longer timeline · Higher cost',
@@ -119,7 +119,7 @@ const _STUB_OPTIONS = [
     ]
   },
   {
-    id: 'F',
+    id: 'BACKUP2',
     name: 'Shelter + Amphitheater',
     image: '3. SHELTER-AMPHITEATRE-AREA.jpg',
     budget: '~250% – 380% of Baseline',
@@ -345,6 +345,7 @@ async function submitVote(forceUpdate = false) {
 
   const house   = document.getElementById('houseNumber').value.trim();
   const comment = document.getElementById('comment').value.trim();
+  const email   = document.getElementById('email').value.trim();
 
   // Validate
   if (!house) {
@@ -370,6 +371,7 @@ async function submitVote(forceUpdate = false) {
         first:   firstChoice,
         second:  secondChoice,
         comment,
+        email,
         update:  forceUpdate
       })
     });

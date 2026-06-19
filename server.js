@@ -21,11 +21,11 @@ const CONFIG_FILE     = path.join(DATA_DIR, 'config.json');
 // ── Default option definitions (source of truth for names / descriptions) ────
 const DEFAULT_OPTIONS = [
   {
-    id: 'A', visible: false,
+    id: 'BACKUP1', visible: false,
     name: 'Surface Only',
     image: '0. SURFACE ONLY.jpg',
     budget: '100% — Baseline',
-    budgetClass: 'budget-a',
+    budgetClass: 'budget-backup1',
     tag: 'Baseline Budget',
     tagColor: '#6c757d',
     description: 'Resurface the 2 existing tennis courts — no demolition, no new construction. ' +
@@ -48,11 +48,11 @@ const DEFAULT_OPTIONS = [
     ]
   },
   {
-    id: 'B', visible: true,
+    id: 'A', visible: true,
     name: 'Simple Rec Area',
     image: '1. SIMPLE-REC-AREA.jpg',
     budget: 'Shorter timeline · Lower cost',
-    budgetClass: 'budget-b',
+    budgetClass: 'budget-a',
     tag: 'Flexible Lawn + Shelter',
     tagColor: '#28a745',
     description: 'Remove both tennis courts and replace with an open green lawn, a prefab timber ' +
@@ -70,11 +70,11 @@ const DEFAULT_OPTIONS = [
     ]
   },
   {
-    id: 'C', visible: true,
+    id: 'B', visible: true,
     name: 'Shelter Only Area',
     image: '2. SHELTER-ONLY-AREA.jpg',
     budget: 'Shorter timeline · Medium cost',
-    budgetClass: 'budget-c',
+    budgetClass: 'budget-b',
     tag: 'Premium Shelter + Garden',
     tagColor: '#7cb518',
     description: 'Demo courts and replace with a larger custom timber premium shelter with built-in seating, ' +
@@ -91,11 +91,11 @@ const DEFAULT_OPTIONS = [
     ]
   },
   {
-    id: 'D', visible: true,
+    id: 'C', visible: true,
     name: 'Rec Area + Bocce Courts',
     image: '4. REC-AREA-BOCCE.jpg',
     budget: 'Medium timeline · Medium cost',
-    budgetClass: 'budget-d',
+    budgetClass: 'budget-c',
     tag: 'Bocce + Social Hub',
     tagColor: '#b07d00',
     description: 'Demo courts and build 2–3 bocce court lanes with timber borders, ' +
@@ -113,11 +113,11 @@ const DEFAULT_OPTIONS = [
     ]
   },
   {
-    id: 'E', visible: true,
+    id: 'D', visible: true,
     name: 'Multi-Purpose Court',
     image: '5. MULTI-PURPOSE.jpg',
     budget: 'Longer timeline · Higher cost',
-    budgetClass: 'budget-e',
+    budgetClass: 'budget-d',
     tag: 'Sports Court + Shelter',
     tagColor: '#e06000',
     description: 'Demo both tennis courts and replace with one large color-coded multi-sport surface ' +
@@ -135,11 +135,11 @@ const DEFAULT_OPTIONS = [
     ]
   },
   {
-    id: 'F', visible: false,
+    id: 'BACKUP2', visible: false,
     name: 'Shelter + Amphitheater',
     image: '3. SHELTER-AMPHITEATRE-AREA.jpg',
     budget: '~250% – 380% of Baseline',
-    budgetClass: 'budget-f',
+    budgetClass: 'budget-backup2',
     tag: '+150% to +280%',
     tagColor: '#c0392b',
     description: 'The most ambitious option: demo courts and build a large multi-bay timber pavilion, ' +
@@ -192,7 +192,7 @@ function requireAuth(req, res, next) {
   res.redirect('/login');
 }
 
-const VALID_OPTIONS    = ['A', 'B', 'C', 'D', 'E', 'F'];
+const VALID_OPTIONS    = ['BACKUP1', 'A', 'B', 'C', 'D', 'BACKUP2'];
 const TOTAL_HOUSEHOLDS = 97;
 
 // ── Middleware ───────────────────────────────────────────────────────────────
@@ -283,6 +283,11 @@ function sanitizeComment(c) {
   return String(c || '').substring(0, 1000);
 }
 
+function sanitizeEmail(e) {
+  const s = String(e || '').trim().substring(0, 254);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) ? s : '';
+}
+
 // ── API: Check if house has voted ────────────────────────────────────────────
 app.get('/api/vote/:house', (req, res) => {
   const house = sanitizeHouse(req.params.house);
@@ -298,7 +303,7 @@ app.get('/api/vote/:house', (req, res) => {
 
 // ── API: Submit or update vote ───────────────────────────────────────────────
 app.post('/api/vote', (req, res) => {
-  const { house, first, second, comment, update } = req.body || {};
+  const { house, first, second, comment, email, update } = req.body || {};
 
   // Validate required fields
   if (!house || !first || !second) {
@@ -340,6 +345,7 @@ app.post('/api/vote', (req, res) => {
     first,
     second,
     comment:   sanitizeComment(comment),
+    email:     sanitizeEmail(email),
     timestamp: new Date().toISOString(),
     updated:   !!(votes[houseKey] && update)
   };
