@@ -40,7 +40,8 @@ const _STUB_OPTIONS = [
     tag: 'Flexible Lawn + Shelter',
     tagColor: '#28a745',
     description: 'Remove both tennis courts and replace with an open green lawn, a prefab timber ' +
-      'shelter with outdoor furniture, a curved hardscape patio, a stone walkway, and moderate landscaping.',
+      'shelter with outdoor furniture, a curved hardscape patio, a stone walkway, and moderate landscaping. ' +
+      'A complete visual transformation.',
     pros: [
       'Shelter + furniture creates an immediate community gathering hub',
       'Open lawn is flexible — events, kids play, yoga, informal sports, cornhole',
