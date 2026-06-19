@@ -103,7 +103,7 @@ const _STUB_OPTIONS = [
     image: '5. MULTI-PURPOSE.jpg',
     budget: 'Longer timeline · Higher cost',
     budgetClass: 'budget-e',
-    tag: 'Multi-Sport Court + Community Shelter',
+    tag: 'Sports Court + Shelter',
     tagColor: '#e06000',
     description: 'Demo both tennis courts and replace with one large color-coded multi-sport surface ' +
       'combining pickleball, basketball, and tennis lines — plus basketball hoops, perimeter fencing, ' +
