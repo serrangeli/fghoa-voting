@@ -27,63 +27,39 @@
       overflow: hidden;
     }
 
-    /* ── Header ── */
-    .header {
-      background: #1a3a5c;
-      color: white;
-      padding: 36px 48px 28px;
-      display: flex;
-      align-items: center;
-      gap: 28px;
-    }
-
-    .header img {
-      height: 80px;
-      flex-shrink: 0;
-    }
-
-    .header-text h1 {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1.65rem;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      line-height: 1.2;
-    }
-
-    .header-text p {
-      font-size: 1rem;
-      color: #a8c8e8;
-      margin-top: 6px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
-
-    /* ── Hero banner ── */
+    /* ── Hero (full-width image with overlay) ── */
     .hero {
-      background: linear-gradient(135deg, #1e5a9c 0%, #0d3660 100%);
+      position: relative;
+      height: 300px;
+      overflow: hidden;
       color: white;
       text-align: center;
-      padding: 44px 48px 40px;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(13,54,96,0.55) 0%, rgba(13,54,96,0.82) 100%);
+    }
+
+    .hero-content {
       position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -60px; right: -60px;
-      width: 220px; height: 220px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 50%;
-    }
-
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: -40px; left: -40px;
-      width: 160px; height: 160px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 50%;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 0 48px;
     }
 
     .hero-eyebrow {
@@ -102,6 +78,7 @@
       font-weight: 900;
       line-height: 1.15;
       margin-bottom: 16px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 
     .hero h2 span {
@@ -110,10 +87,10 @@
 
     .hero p {
       font-size: 1.05rem;
-      color: #cde4f5;
-      max-width: 560px;
-      margin: 0 auto;
+      color: #e8f4ff;
+      max-width: 600px;
       line-height: 1.65;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
     }
 
     /* ── Body ── */
@@ -363,23 +340,18 @@
 <body>
   <div class="flyer">
 
-    <!-- Header -->
-    <div class="header">
-      <img src="public/images/fglogo.jpg" alt="Fallsington Grant HOA">
-      <div class="header-text">
-        <h1>Fallsington Grant Homeowners Association</h1>
-        <p>Recreation Area Redevelopment &mdash; Community Opinion Survey 2026</p>
-      </div>
-    </div>
-
-    <!-- Hero -->
+    <!-- Hero with full-width image -->
     <div class="hero">
-      <div class="hero-eyebrow">Your Voice Matters</div>
-      <h2>Help Shape the Future of<br><span>Our Recreation Area</span></h2>
-      <p>
-        The tennis courts behind the pool are ready for redevelopment.
-        The board has prepared four concepts and wants to hear from <strong>every household</strong> before making a final recommendation.
-      </p>
+      <img class="hero-bg" src="public/images/fglogo.jpg" alt="Fallsington Grant">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">Fallsington Grant HOA &mdash; Your Voice Matters</div>
+        <h2>Help Shape the Future of<br><span>Our Recreation Area</span></h2>
+        <p>
+          The tennis courts behind the pool are ready for redevelopment.
+          The board has prepared four concepts and wants to hear from <strong>every household</strong> before making a final recommendation.
+        </p>
+      </div>
     </div>
 
     <!-- Body -->
@@ -450,8 +422,9 @@
         </div>
 
         <div class="deadline-box">
-          <div class="deadline-label">Password</div>
-          <div class="deadline-text">Check your meeting<br>minutes for access</div>
+          <div class="deadline-label">🔑 Site Password</div>
+          <div class="deadline-text">fgrecarea</div>
+          <div style="font-size:0.7rem;color:#5a3e00;margin-top:6px;font-family:'Open Sans',sans-serif;">Also in your community<br>meeting minutes</div>
         </div>
       </div>
 
@@ -471,7 +444,5 @@
 
   </div>
 
-  <!-- Generate QR via qrcodejs as fallback if network unavailable -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </body>
 </html>
